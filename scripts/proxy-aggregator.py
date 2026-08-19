@@ -50,29 +50,29 @@ SOURCES = [
         "url": "https://raw.githubusercontent.com/stormsia/proxy-list/main/working_proxies.txt",
         "protocol": "HTTP",
     },
-    {
+{
         "name": "Thordata Awesome Free Proxy List",
-        "url": "https://raw.githubusercontent.com/thordata/awesome-free-proxy-list/refs/heads/main/README.md",
+        "url": "https://raw.githubusercontent.com/Thordata/awesome-free-proxy-list/main/proxies/http.txt",
         "protocol": "HTTP",
     },
     {
         "name": "TuanMinPay Live Proxy",
-        "url": "https://raw.githubusercontent.com/tuanminhpay/proxy/main/http.txt",
+        "url": "https://raw.githubusercontent.com/tuanminpay/live-proxy/master/http.txt",
         "protocol": "HTTP",
     },
     {
         "name": "Argh94 Proxy List",
-        "url": "https://raw.githubusercontent.com/argh94/awesome-free-proxy-list/main/list.txt",
+        "url": "https://raw.githubusercontent.com/Argh94/Proxy-List/main/HTTP.txt",
         "protocol": "HTTP",
     },
     {
         "name": "ProxyScraper ProxyScraper",
-        "url": "https://raw.githubusercontent.com/proxyscrapper/scrape-proxies/main/proxies.txt",
+        "url": "https://raw.githubusercontent.com/ProxyScraper/ProxyScraper/main/http.txt",
         "protocol": "HTTP",
     },
     {
-        "name": "ProxyScraper all.txt",
-        "url": "https://raw.githubusercontent.com/proxyscrape/awesome-proxy-list/main/all.txt",
+        "name": "ProxyScrape free-proxy-list",
+        "url": "https://raw.githubusercontent.com/proxyscrape/free-proxy-list/main/proxies/all/data.json",
         "protocol": "HTTP",
     },
 ]
