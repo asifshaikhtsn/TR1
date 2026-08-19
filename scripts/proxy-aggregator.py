@@ -244,13 +244,8 @@ async def main():
 
         OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-        all_lines = []
-        for p in sorted(all_proxies, key=lambda x: (x["address"], x["protocol"])):
-            all_lines.append("{}|{}|{}".format(p["address"], p["protocol"], p["country"]))
-
         tier3_lines = sorted(set("{}|{}|{}".format(p["address"], p["protocol"], p["country"]) for p in tier3))
 
-        (OUTPUT_DIR / "all.txt").write_text("\n".join(all_lines) + "\n", encoding="utf-8")
         (OUTPUT_DIR / "tier3.txt").write_text("\n".join(tier3_lines) + "\n", encoding="utf-8")
 
         country_counts = defaultdict(int)
