@@ -1,6 +1,7 @@
 import asyncio
 import json
 import re
+import shutil
 import time
 from collections import defaultdict
 from pathlib import Path
@@ -8,18 +9,14 @@ from pathlib import Path
 import aiohttp
 
 ROOT = Path(__file__).resolve().parent.parent
-OUTPUT_DIR = ROOT / "output"
-COUNTRIES_FILE = ROOT / "countries.txt"
-
-TT3_COUNTRIES = ["AE", "AT", "AU", "BE", "CA", "CH", "DE", "DK", "ES",
-                 "FI", "FR", "GB", "IE", "IT", "LU", "NL",
-                 "NO", "NZ", "SE", "US", "PL", "PT", "CR", "PR"]
+COUNTRY_DIR = ROOT / "country"
 
 # Every source the TrafficFlare software uses. Each entry can be:
 #   format: "text"      -> ip:port per line (country via ip-api geolocation)
 #   format: "json"      -> structured rows with optional country/protocol fields
 #   format: "country"   -> per-country files, one fetch per selected country
 ADDRESS_RE = re.compile(r"(\d{1,3}(?:\.\d{1,3}){3}:\d{1,5})")
+SCHEME_RE = re.compile(r"(https?|socks[45])://", re.IGNORECASE)
 _TEXT_PROTOCOLS = ("HTTP", "HTTPS", "SOCKS4", "SOCKS5")
 
 
@@ -42,70 +39,89 @@ def _normalize_protocol(value):
 
 
 SOURCES = [
-    # ---- text sources (country via ip-api geolocation) ----
-    {"id": "worldpool", "name": "Worldpool", "format": "text",
-     "url": "https://raw.githubusercontent.com/CelestialBrain/worldpool/main/proxies/all.txt"},
-    {"id": "stormsia-proxy-list", "name": "Stormsia Proxy List", "format": "text",
+    # ---- stormsia/proxy-list ----
+    {"id": "stormsia-working", "name": "Stormsia Working (mixed)", "format": "text",
      "url": "https://raw.githubusercontent.com/stormsia/proxy-list/main/working_proxies.txt"},
-    {"id": "proxy-pulse", "name": "Proxy Pulse", "format": "text",
-     "url": "https://raw.githubusercontent.com/BlacKSnowDot0/Proxy-Pulse/main/all.txt"},
-    {"id": "thordata-awesome-free-proxy-list", "name": "Thordata Awesome Free Proxy List", "format": "text",
+    {"id": "stormsia-http", "name": "Stormsia HTTP", "format": "text", "protocol": "HTTP",
+     "url": "https://raw.githubusercontent.com/stormsia/proxy-list/main/http.txt"},
+    {"id": "stormsia-socks4", "name": "Stormsia SOCKS4", "format": "text", "protocol": "SOCKS4",
+     "url": "https://raw.githubusercontent.com/stormsia/proxy-list/main/socks4.txt"},
+    {"id": "stormsia-socks5", "name": "Stormsia SOCKS5", "format": "text", "protocol": "SOCKS5",
+     "url": "https://raw.githubusercontent.com/stormsia/proxy-list/main/socks5.txt"},
+    # ---- BlacKSnowDot0/Proxy-Pulse ----
+    {"id": "proxy-pulse-http", "name": "Proxy Pulse HTTP", "format": "text", "protocol": "HTTP",
+     "url": "https://raw.githubusercontent.com/BlacKSnowDot0/Proxy-Pulse/main/http.txt"},
+    {"id": "proxy-pulse-https", "name": "Proxy Pulse HTTPS", "format": "text", "protocol": "HTTPS",
+     "url": "https://raw.githubusercontent.com/BlacKSnowDot0/Proxy-Pulse/main/https.txt"},
+    {"id": "proxy-pulse-socks4", "name": "Proxy Pulse SOCKS4", "format": "text", "protocol": "SOCKS4",
+     "url": "https://raw.githubusercontent.com/BlacKSnowDot0/Proxy-Pulse/main/socks4.txt"},
+    {"id": "proxy-pulse-socks5", "name": "Proxy Pulse SOCKS5", "format": "text", "protocol": "SOCKS5",
+     "url": "https://raw.githubusercontent.com/BlacKSnowDot0/Proxy-Pulse/main/socks5.txt"},
+    # ---- Thordata/awesome-free-proxy-list ----
+    {"id": "thordata-http", "name": "Thordata HTTP", "format": "text", "protocol": "HTTP",
      "url": "https://raw.githubusercontent.com/Thordata/awesome-free-proxy-list/main/proxies/http.txt"},
-    {"id": "vpslab-free-proxy-list", "name": "VPSLab Free Proxy List", "format": "text",
-     "url": "https://raw.githubusercontent.com/VPSLabCloud/VPSLab-Free-Proxy-List/main/all_proxies.txt"},
-    {"id": "trio666-proxy-checker", "name": "trio666 Proxy Checker", "format": "text",
-     "url": "https://raw.githubusercontent.com/trio666/proxy-checker/main/all.txt"},
-    {"id": "argh94-proxy-list", "name": "Argh94 Proxy List", "format": "text",
+    {"id": "thordata-https", "name": "Thordata HTTPS", "format": "text", "protocol": "HTTPS",
+     "url": "https://raw.githubusercontent.com/Thordata/awesome-free-proxy-list/main/proxies/https.txt"},
+    {"id": "thordata-socks4", "name": "Thordata SOCKS4", "format": "text", "protocol": "SOCKS4",
+     "url": "https://raw.githubusercontent.com/Thordata/awesome-free-proxy-list/main/proxies/socks4.txt"},
+    {"id": "thordata-socks5", "name": "Thordata SOCKS5", "format": "text", "protocol": "SOCKS5",
+     "url": "https://raw.githubusercontent.com/Thordata/awesome-free-proxy-list/main/proxies/socks5.txt"},
+    # ---- VPSLabCloud/VPSLab-Free-Proxy-List ----
+    {"id": "vpslab-http", "name": "VPSLab HTTP", "format": "text", "protocol": "HTTP",
+     "url": "https://raw.githubusercontent.com/VPSLabCloud/VPSLab-Free-Proxy-List/main/http_all.txt"},
+    {"id": "vpslab-socks4", "name": "VPSLab SOCKS4", "format": "text", "protocol": "SOCKS4",
+     "url": "https://raw.githubusercontent.com/VPSLabCloud/VPSLab-Free-Proxy-List/main/socks4_all.txt"},
+    {"id": "vpslab-socks5", "name": "VPSLab SOCKS5", "format": "text", "protocol": "SOCKS5",
+     "url": "https://raw.githubusercontent.com/VPSLabCloud/VPSLab-Free-Proxy-List/main/socks5_all.txt"},
+    # ---- Argh94/Proxy-List ----
+    {"id": "argh94-http", "name": "Argh94 HTTP", "format": "text", "protocol": "HTTP",
      "url": "https://raw.githubusercontent.com/Argh94/Proxy-List/main/HTTP.txt"},
-    {"id": "proxyscraper-proxyscraper", "name": "ProxyScraper ProxyScraper", "format": "text",
+    {"id": "argh94-https", "name": "Argh94 HTTPS", "format": "text", "protocol": "HTTPS",
+     "url": "https://raw.githubusercontent.com/Argh94/Proxy-List/main/HTTPS.txt"},
+    {"id": "argh94-socks4", "name": "Argh94 SOCKS4", "format": "text", "protocol": "SOCKS4",
+     "url": "https://raw.githubusercontent.com/Argh94/Proxy-List/main/SOCKS4.txt"},
+    {"id": "argh94-socks5", "name": "Argh94 SOCKS5", "format": "text", "protocol": "SOCKS5",
+     "url": "https://raw.githubusercontent.com/Argh94/Proxy-List/main/SOCKS5.txt"},
+    # ---- ProxyScraper/ProxyScraper ----
+    {"id": "proxyscraper-http", "name": "ProxyScraper HTTP", "format": "text", "protocol": "HTTP",
      "url": "https://raw.githubusercontent.com/ProxyScraper/ProxyScraper/main/http.txt"},
-    {"id": "kangproxy-tested", "name": "KangProxy TESTED", "format": "text",
-     "url": "https://cdn.jsdelivr.net/gh/officialputuid/KangProxy@main/xResults/RAW.txt"},
-    {"id": "kangproxy-http", "name": "KangProxy HTTP", "format": "text",
-     "url": "https://cdn.jsdelivr.net/gh/officialputuid/KangProxy@main/http/http.txt"},
-    {"id": "tuanminpay-live-proxy", "name": "TuanMinPay Live Proxy", "format": "text",
+    {"id": "proxyscraper-socks4", "name": "ProxyScraper SOCKS4", "format": "text", "protocol": "SOCKS4",
+     "url": "https://raw.githubusercontent.com/ProxyScraper/ProxyScraper/main/socks4.txt"},
+    {"id": "proxyscraper-socks5", "name": "ProxyScraper SOCKS5", "format": "text", "protocol": "SOCKS5",
+     "url": "https://raw.githubusercontent.com/ProxyScraper/ProxyScraper/main/socks5.txt"},
+    # ---- officialputuid/KangProxy ----
+    {"id": "kangproxy-tested", "name": "KangProxy TESTED (mixed)", "format": "text",
+     "url": "https://raw.githubusercontent.com/officialputuid/KangProxy/main/xResults/RAW.txt"},
+    {"id": "kangproxy-http", "name": "KangProxy HTTP", "format": "text", "protocol": "HTTP",
+     "url": "https://raw.githubusercontent.com/officialputuid/KangProxy/main/http/http.txt"},
+    {"id": "kangproxy-https", "name": "KangProxy HTTPS", "format": "text", "protocol": "HTTPS",
+     "url": "https://raw.githubusercontent.com/officialputuid/KangProxy/main/https/https.txt"},
+    {"id": "kangproxy-socks4", "name": "KangProxy SOCKS4", "format": "text", "protocol": "SOCKS4",
+     "url": "https://raw.githubusercontent.com/officialputuid/KangProxy/main/socks4/socks4.txt"},
+    {"id": "kangproxy-socks5", "name": "KangProxy SOCKS5", "format": "text", "protocol": "SOCKS5",
+     "url": "https://raw.githubusercontent.com/officialputuid/KangProxy/main/socks5/socks5.txt"},
+    # ---- tuanminpay/live-proxy ----
+    {"id": "tuanminpay-http", "name": "TuanMinPay HTTP", "format": "text", "protocol": "HTTP",
      "url": "https://raw.githubusercontent.com/tuanminpay/live-proxy/master/http.txt"},
-    {"id": "vmheaven-free-proxy-list", "name": "VMHeaven Free Proxy List", "format": "text",
-     "url": "https://raw.githubusercontent.com/vmheaven/VMHeaven-Free-Proxy-Updated/refs/heads/main/http.txt"},
-    {"id": "riommo-proxyfree", "name": "RioMMO ProxyFree", "format": "text",
+    {"id": "tuanminpay-socks4", "name": "TuanMinPay SOCKS4", "format": "text", "protocol": "SOCKS4",
+     "url": "https://raw.githubusercontent.com/tuanminpay/live-proxy/master/socks4.txt"},
+    {"id": "tuanminpay-socks5", "name": "TuanMinPay SOCKS5", "format": "text", "protocol": "SOCKS5",
+     "url": "https://raw.githubusercontent.com/tuanminpay/live-proxy/master/socks5.txt"},
+    # ---- RioMMO/ProxyFree ----
+    {"id": "riommo-http", "name": "RioMMO HTTP", "format": "text", "protocol": "HTTP",
      "url": "https://raw.githubusercontent.com/RioMMO/ProxyFree/refs/heads/main/HTTP.txt"},
-    # ---- country-template source (one fetch per selected country, no geolocation needed) ----
-    {"id": "iplocate-country", "name": "IPLocate Country Proxies", "format": "country",
-     "url_template": "https://raw.githubusercontent.com/iplocate/free-proxy-list/main/countries/{country}/proxies.txt"},
+    {"id": "riommo-socks4", "name": "RioMMO SOCKS4", "format": "text", "protocol": "SOCKS4",
+     "url": "https://raw.githubusercontent.com/RioMMO/ProxyFree/refs/heads/main/SOCKS4.txt"},
+    {"id": "riommo-socks5", "name": "RioMMO SOCKS5", "format": "text", "protocol": "SOCKS5",
+     "url": "https://raw.githubusercontent.com/RioMMO/ProxyFree/refs/heads/main/SOCKS5.txt"},
     # ---- json sources (country/protocol extracted from fields) ----
-    {"id": "naravid-checked-proxies", "name": "Naravid Checked Proxies", "format": "json",
-     "url": "https://raw.githubusercontent.com/naravid19/checked-proxies/main/proxies_pretty.json",
-     "country_field": "geolocation.country.iso_code", "protocol_field": "protocol", "latency_field": "timeout"},
     {"id": "bes-public-proxy-list", "name": "Bes-js Public Proxy List", "format": "json",
      "url": "https://raw.githubusercontent.com/Bes-js/public-proxy-list/main/proxies_geolocation.json",
      "country_field": "geolocation.countryCode", "protocol_field": "protocol"},
-    {"id": "gifted-free-proxies", "name": "Gifted Free Proxies", "format": "json",
-     "url": "https://proxies.gifted.co.ke/files/proxies.json"},
-    {"id": "proxyscrape-free-proxy-list", "name": "ProxyScrape Free Proxy List", "format": "json",
-     "url": "https://raw.githubusercontent.com/proxyscrape/free-proxy-list/main/proxies/all/data.json",
-     "country_field": "country_code", "protocol_field": "protocol", "latency_field": "latency"},
-    {"id": "hproxy-free-proxy-list", "name": "HProxy Free Proxy List", "format": "json",
-     "url": "https://cdn.jsdelivr.net/gh/hproxy-com/free-proxy-list@main/all.json",
-     "country_field": "country", "protocol_field": "protocols", "latency_field": "latency_ms"},
-    {"id": "proxyscrape-direct-api", "name": "ProxyScrape Direct API", "format": "json",
-     "url": "https://api.proxyscrape.com/v4/free-proxy-list/get?request=display_proxies&protocol=all&format=json",
-     "country_field": "country", "protocol_field": "protocol", "latency_field": "latency"},
     {"id": "proxifly-free-proxy-list", "name": "Proxifly Free Proxy List", "format": "json",
      "url": "https://raw.githubusercontent.com/proxifly/free-proxy-list/main/proxies/all/data.json",
      "country_field": "country", "protocol_field": "protocol", "latency_field": "latency"},
 ]
-
-
-def load_selected_countries():
-    if COUNTRIES_FILE.exists():
-        vals = []
-        for line in COUNTRIES_FILE.read_text(encoding="utf-8").splitlines():
-            line = line.strip().upper()
-            if line and not line.startswith("#"):
-                vals.append(line)
-        if vals:
-            return vals
-    return TT3_COUNTRIES
 
 
 async def fetch_text(session, url):
@@ -128,13 +144,16 @@ def _nested_get(row, dotted):
     return cur if cur is not None else ""
 
 
-def parse_text_proxies(text):
-    proxies = set()
+def parse_text_proxies(text, default_protocol="HTTP"):
+    rows = {}
     for line in text.splitlines():
         m = ADDRESS_RE.search(line)
-        if m:
-            proxies.add(m.group(1))
-    return proxies
+        if not m:
+            continue
+        sm = SCHEME_RE.search(line)
+        proto = _normalize_protocol(sm.group(1)) if sm else default_protocol
+        rows.setdefault(m.group(1), proto)
+    return [{"address": a, "protocol": p, "country": ""} for a, p in rows.items()]
 
 
 def parse_json_proxies(text, src):
@@ -178,15 +197,7 @@ def parse_json_proxies(text, src):
     return rows
 
 
-async def scrape_source(session, src, selected_countries):
-    if src["format"] == "country":
-        rows = []
-        for country in selected_countries:
-            url = src["url_template"].replace("{country}", country).replace("{COUNTRY}", country)
-            text = await fetch_text(session, url)
-            for addr in parse_text_proxies(text):
-                rows.append({"address": addr, "protocol": "HTTP", "country": country})
-        return rows
+async def scrape_source(session, src):
     if src["format"] == "json":
         text = await fetch_text(session, src["url"])
         if not text:
@@ -195,37 +206,40 @@ async def scrape_source(session, src, selected_countries):
     text = await fetch_text(session, src["url"])
     if not text:
         return []
-    return [{"address": a, "protocol": "HTTP", "country": ""} for a in parse_text_proxies(text)]
+    return parse_text_proxies(text, src.get("protocol", "HTTP"))
 
 
 async def geolocate_batch(session, ips):
     result = {}
-    for i in range(0, len(ips), 100):
-        batch = ips[i : i + 100]
-        try:
-            async with session.post(
-                "http://ip-api.com/batch", json=batch, timeout=aiohttp.ClientTimeout(total=30)
-            ) as resp:
-                if resp.status != 200:
-                    continue
-                data = await resp.json()
-            for entry in data:
-                if isinstance(entry, dict) and entry.get("status") == "success":
-                    result[entry["query"]] = entry.get("countryCode", "").upper()
-        except Exception:
-            continue
-        if i + 100 < len(ips):
-            await asyncio.sleep(1.1)
+    batches = [ips[i : i + 100] for i in range(0, len(ips), 100)]
+    for batch in batches:
+        for attempt in range(5):
+            status, data = 0, None
+            try:
+                async with session.post(
+                    "http://ip-api.com/batch", json=batch, timeout=aiohttp.ClientTimeout(total=30)
+                ) as resp:
+                    status = resp.status
+                    if status == 200:
+                        data = await resp.json()
+            except Exception:
+                pass
+            if isinstance(data, list):
+                for entry in data:
+                    if isinstance(entry, dict) and entry.get("status") == "success":
+                        result[entry["query"]] = entry.get("countryCode", "").upper()
+                break
+            await asyncio.sleep(min(15, 3 * (attempt + 1)))
+        await asyncio.sleep(1.5)
     return result
 
 
 async def main():
-    selected = load_selected_countries()
     async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=30)) as session:
         all_proxies = []
         seen = set()
         for src in SOURCES:
-            items = await scrape_source(session, src, selected)
+            items = await scrape_source(session, src)
             for item in items:
                 key = (item["address"], item["protocol"])
                 if key not in seen:
@@ -240,29 +254,41 @@ async def main():
                 ip = p["address"].rsplit(":", 1)[0]
                 p["country"] = country_map.get(ip, "")
 
-        tier3 = [p for p in all_proxies if p["country"] in selected]
+        grouped = defaultdict(set)
+        protocol_counts = defaultdict(int)
+        no_country_count = 0
+        for p in all_proxies:
+            if not p["country"]:
+                no_country_count += 1
+                continue
+            grouped[(p["country"], p["protocol"])].add(p["address"])
+            protocol_counts[p["protocol"]] += 1
 
-        OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-
-        tier3_lines = sorted(set("{}|{}|{}".format(p["address"], p["protocol"], p["country"]) for p in tier3))
-
-        (OUTPUT_DIR / "tier3.txt").write_text("\n".join(tier3_lines) + "\n", encoding="utf-8")
+        if COUNTRY_DIR.exists():
+            shutil.rmtree(COUNTRY_DIR)
+        COUNTRY_DIR.mkdir(parents=True, exist_ok=True)
 
         country_counts = defaultdict(int)
-        for p in all_proxies:
-            if p["country"]:
-                country_counts[p["country"]] += 1
+        for (cc, proto), addrs in grouped.items():
+            cc_dir = COUNTRY_DIR / cc
+            cc_dir.mkdir(parents=True, exist_ok=True)
+            (cc_dir / "{}.txt".format(proto.lower())).write_text(
+                "\n".join(sorted(addrs)) + "\n", encoding="utf-8"
+            )
+            country_counts[cc] += len(addrs)
 
         summary = {
             "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
             "sources": [{"id": s["id"], "name": s["name"], "format": s["format"]} for s in SOURCES],
             "total_scraped": len(all_proxies),
             "geolocated": len(country_map),
-            "tier3_count": len(tier3_lines),
-            "selected_countries": selected,
+            "stored_count": sum(len(addrs) for addrs in grouped.values()),
+            "no_country_count": no_country_count,
+            "country_count": len(country_counts),
+            "protocol_counts": dict(sorted(protocol_counts.items())),
             "country_counts": dict(sorted(country_counts.items(), key=lambda x: -x[1])),
         }
-        (OUTPUT_DIR / "last_run.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
+        (ROOT / "last_run.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
         print(json.dumps(summary, indent=2))
 
 

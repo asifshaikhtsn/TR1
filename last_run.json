@@ -1,0 +1,357 @@
+{
+  "timestamp": "2026-08-21T19:25:22Z",
+  "sources": [
+    {
+      "id": "stormsia-working",
+      "name": "Stormsia Working (mixed)",
+      "format": "text"
+    },
+    {
+      "id": "stormsia-http",
+      "name": "Stormsia HTTP",
+      "format": "text"
+    },
+    {
+      "id": "stormsia-socks4",
+      "name": "Stormsia SOCKS4",
+      "format": "text"
+    },
+    {
+      "id": "stormsia-socks5",
+      "name": "Stormsia SOCKS5",
+      "format": "text"
+    },
+    {
+      "id": "proxy-pulse-http",
+      "name": "Proxy Pulse HTTP",
+      "format": "text"
+    },
+    {
+      "id": "proxy-pulse-https",
+      "name": "Proxy Pulse HTTPS",
+      "format": "text"
+    },
+    {
+      "id": "proxy-pulse-socks4",
+      "name": "Proxy Pulse SOCKS4",
+      "format": "text"
+    },
+    {
+      "id": "proxy-pulse-socks5",
+      "name": "Proxy Pulse SOCKS5",
+      "format": "text"
+    },
+    {
+      "id": "thordata-http",
+      "name": "Thordata HTTP",
+      "format": "text"
+    },
+    {
+      "id": "thordata-https",
+      "name": "Thordata HTTPS",
+      "format": "text"
+    },
+    {
+      "id": "thordata-socks4",
+      "name": "Thordata SOCKS4",
+      "format": "text"
+    },
+    {
+      "id": "thordata-socks5",
+      "name": "Thordata SOCKS5",
+      "format": "text"
+    },
+    {
+      "id": "vpslab-http",
+      "name": "VPSLab HTTP",
+      "format": "text"
+    },
+    {
+      "id": "vpslab-socks4",
+      "name": "VPSLab SOCKS4",
+      "format": "text"
+    },
+    {
+      "id": "vpslab-socks5",
+      "name": "VPSLab SOCKS5",
+      "format": "text"
+    },
+    {
+      "id": "argh94-http",
+      "name": "Argh94 HTTP",
+      "format": "text"
+    },
+    {
+      "id": "argh94-https",
+      "name": "Argh94 HTTPS",
+      "format": "text"
+    },
+    {
+      "id": "argh94-socks4",
+      "name": "Argh94 SOCKS4",
+      "format": "text"
+    },
+    {
+      "id": "argh94-socks5",
+      "name": "Argh94 SOCKS5",
+      "format": "text"
+    },
+    {
+      "id": "proxyscraper-http",
+      "name": "ProxyScraper HTTP",
+      "format": "text"
+    },
+    {
+      "id": "proxyscraper-socks4",
+      "name": "ProxyScraper SOCKS4",
+      "format": "text"
+    },
+    {
+      "id": "proxyscraper-socks5",
+      "name": "ProxyScraper SOCKS5",
+      "format": "text"
+    },
+    {
+      "id": "kangproxy-tested",
+      "name": "KangProxy TESTED (mixed)",
+      "format": "text"
+    },
+    {
+      "id": "kangproxy-http",
+      "name": "KangProxy HTTP",
+      "format": "text"
+    },
+    {
+      "id": "kangproxy-https",
+      "name": "KangProxy HTTPS",
+      "format": "text"
+    },
+    {
+      "id": "kangproxy-socks4",
+      "name": "KangProxy SOCKS4",
+      "format": "text"
+    },
+    {
+      "id": "kangproxy-socks5",
+      "name": "KangProxy SOCKS5",
+      "format": "text"
+    },
+    {
+      "id": "tuanminpay-http",
+      "name": "TuanMinPay HTTP",
+      "format": "text"
+    },
+    {
+      "id": "tuanminpay-socks4",
+      "name": "TuanMinPay SOCKS4",
+      "format": "text"
+    },
+    {
+      "id": "tuanminpay-socks5",
+      "name": "TuanMinPay SOCKS5",
+      "format": "text"
+    },
+    {
+      "id": "riommo-http",
+      "name": "RioMMO HTTP",
+      "format": "text"
+    },
+    {
+      "id": "riommo-socks4",
+      "name": "RioMMO SOCKS4",
+      "format": "text"
+    },
+    {
+      "id": "riommo-socks5",
+      "name": "RioMMO SOCKS5",
+      "format": "text"
+    },
+    {
+      "id": "bes-public-proxy-list",
+      "name": "Bes-js Public Proxy List",
+      "format": "json"
+    },
+    {
+      "id": "proxifly-free-proxy-list",
+      "name": "Proxifly Free Proxy List",
+      "format": "json"
+    }
+  ],
+  "total_scraped": 46515,
+  "geolocated": 24474,
+  "stored_count": 44074,
+  "no_country_count": 2441,
+  "country_count": 164,
+  "protocol_counts": {
+    "HTTP": 17677,
+    "HTTPS": 6018,
+    "SOCKS4": 11794,
+    "SOCKS5": 8585
+  },
+  "country_counts": {
+    "US": 7903,
+    "ID": 4891,
+    "CA": 2467,
+    "CN": 1941,
+    "RU": 1584,
+    "GB": 1578,
+    "DE": 1503,
+    "IN": 1429,
+    "NL": 1249,
+    "BR": 1248,
+    "FR": 1004,
+    "CO": 910,
+    "HK": 877,
+    "BD": 875,
+    "SG": 784,
+    "KR": 756,
+    "TH": 745,
+    "PH": 741,
+    "VN": 722,
+    "JP": 620,
+    "MX": 588,
+    "TR": 543,
+    "VE": 388,
+    "AR": 388,
+    "UA": 386,
+    "ZA": 353,
+    "IR": 343,
+    "EC": 332,
+    "IT": 311,
+    "FI": 309,
+    "KH": 289,
+    "PK": 279,
+    "PL": 268,
+    "DO": 254,
+    "PE": 228,
+    "CL": 224,
+    "SE": 223,
+    "RO": 217,
+    "EG": 208,
+    "AU": 206,
+    "MY": 176,
+    "ES": 176,
+    "KE": 165,
+    "BZ": 138,
+    "KZ": 136,
+    "IE": 115,
+    "IL": 113,
+    "BG": 108,
+    "CZ": 107,
+    "TW": 105,
+    "PY": 102,
+    "SY": 98,
+    "GT": 93,
+    "LY": 91,
+    "LV": 88,
+    "ZW": 86,
+    "IQ": 85,
+    "AE": 84,
+    "LT": 82,
+    "CH": 79,
+    "NG": 78,
+    "RS": 74,
+    "GE": 71,
+    "HN": 70,
+    "CW": 70,
+    "NP": 67,
+    "AL": 62,
+    "HU": 59,
+    "AT": 56,
+    "EE": 52,
+    "CY": 44,
+    "MA": 41,
+    "AM": 39,
+    "BO": 37,
+    "DK": 36,
+    "CR": 34,
+    "MN": 34,
+    "UZ": 33,
+    "MM": 29,
+    "PR": 29,
+    "MD": 28,
+    "PS": 26,
+    "HR": 25,
+    "SK": 25,
+    "GR": 24,
+    "BE": 24,
+    "GH": 24,
+    "LB": 24,
+    "KG": 23,
+    "TZ": 23,
+    "ME": 21,
+    "PA": 21,
+    "SN": 20,
+    "SA": 17,
+    "PT": 17,
+    "BW": 17,
+    "RW": 15,
+    "AZ": 15,
+    "XK": 15,
+    "YE": 14,
+    "UG": 13,
+    "LA": 13,
+    "BA": 12,
+    "BY": 11,
+    "CD": 11,
+    "UY": 10,
+    "QA": 9,
+    "MT": 9,
+    "MW": 9,
+    "AF": 8,
+    "NO": 7,
+    "SC": 7,
+    "SI": 6,
+    "ZM": 5,
+    "CG": 5,
+    "NZ": 5,
+    "GQ": 4,
+    "LS": 4,
+    "PG": 4,
+    "NA": 4,
+    "GN": 4,
+    "BJ": 4,
+    "NI": 4,
+    "SO": 4,
+    "MZ": 4,
+    "MO": 4,
+    "CM": 4,
+    "BI": 3,
+    "BT": 3,
+    "TT": 3,
+    "WS": 3,
+    "YT": 3,
+    "GM": 3,
+    "MK": 3,
+    "HT": 3,
+    "SS": 3,
+    "TC": 3,
+    "LU": 2,
+    "AO": 2,
+    "MU": 2,
+    "VG": 2,
+    "BS": 2,
+    "BH": 2,
+    "CU": 2,
+    "TG": 2,
+    "JM": 2,
+    "SV": 1,
+    "BF": 1,
+    "MG": 1,
+    "TN": 1,
+    "TM": 1,
+    "CI": 1,
+    "MF": 1,
+    "DZ": 1,
+    "KY": 1,
+    "SZ": 1,
+    "SX": 1,
+    "SR": 1,
+    "GA": 1,
+    "LC": 1,
+    "GD": 1,
+    "AG": 1,
+    "BB": 1,
+    "OM": 1
+  }
+}
