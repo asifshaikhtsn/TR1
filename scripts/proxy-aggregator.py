@@ -246,13 +246,12 @@ async def main():
                     seen.add(key)
                     all_proxies.append(item)
 
-        need_geo = [p for p in all_proxies if not p["country"]]
-        ips = list({p["address"].rsplit(":", 1)[0] for p in need_geo})
+        ips = list({p["address"].rsplit(":", 1)[0] for p in all_proxies})
         country_map = await geolocate_batch(session, ips)
         for p in all_proxies:
-            if not p["country"]:
-                ip = p["address"].rsplit(":", 1)[0]
-                p["country"] = country_map.get(ip, "")
+            cc = country_map.get(p["address"].rsplit(":", 1)[0])
+            if cc:
+                p["country"] = cc
 
         grouped = defaultdict(set)
         protocol_counts = defaultdict(int)
