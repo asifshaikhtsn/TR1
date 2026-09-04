@@ -1,0 +1,73 @@
+name: Shared Proxy Run with Accurate Country
+
+on:
+  workflow_call:
+    inputs:
+      script:
+        required: true
+        type: string
+      dependencies:
+        required: false
+        type: string
+        default: "aiohttp aiohttp-socks"
+      commit_message:
+        required: false
+        type: string
+        default: "Update proxy lists [skip ci]"
+      timeout_minutes:
+        required: false
+        type: number
+        default: 120
+
+permissions:
+  contents: write
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: ${{ inputs.timeout_minutes }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: GeoLite cache key
+        id: geo-date
+        run: echo "week=$(date -u +%G-%V)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache GeoLite2 Country
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/GeoLite2-Country.mmdb
+          key: geolite2-country-${{ runner.os }}-${{ steps.geo-date.outputs.week }}
+
+      - name: Install dependencies
+        run: pip install ${{ inputs.dependencies }} geoip2
+
+      - name: Fetch shared geolocation layer
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/asifshaikhtsn/Walla/main/geo_country.py -o geo_country.py
+          curl -fsSL https://raw.githubusercontent.com/asifshaikhtsn/Walla/main/geo_runner.py -o geo_runner.py
+
+      - name: Run proxy job with MaxMind/IPinfo geolocation
+        env:
+          MAXMIND_ACCOUNT_ID: ${{ secrets.MAXMIND_ACCOUNT_ID }}
+          MAXMIND_LICENSE_KEY: ${{ secrets.MAXMIND_LICENSE_KEY }}
+          IPINFO_TOKEN: ${{ secrets.IPINFO_TOKEN }}
+        run: python geo_runner.py "${{ inputs.script }}"
+
+      - name: Commit results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          rm -f geo_country.py geo_runner.py
+          git add -A
+          git diff --cached --quiet && echo "No changes to commit" && exit 0
+          git commit -m "${{ inputs.commit_message }}"
+          BRANCH=$(git rev-parse --abbrev-ref HEAD)
+          git pull --rebase --autostash origin "$BRANCH" || true
+          git push origin HEAD
