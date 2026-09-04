@@ -1,248 +1,192 @@
 {
-  "timestamp": "2026-09-04T05:17:06Z",
+  "timestamp": "2026-09-04T10:00:13Z",
+  "engine": "pool-v2.1",
+  "health_policy": "temporary_quarantine_2h_6h_12h_24h",
   "sources": [
-    {
-      "id": "stormsia-working",
-      "name": "Stormsia Working (mixed)",
-      "format": "text"
-    },
-    {
-      "id": "stormsia-http",
-      "name": "Stormsia HTTP",
-      "format": "text"
-    },
-    {
-      "id": "stormsia-socks4",
-      "name": "Stormsia SOCKS4",
-      "format": "text"
-    },
-    {
-      "id": "stormsia-socks5",
-      "name": "Stormsia SOCKS5",
-      "format": "text"
-    },
-    {
-      "id": "proxy-pulse-http",
-      "name": "Proxy Pulse HTTP",
-      "format": "text"
-    },
-    {
-      "id": "proxy-pulse-https",
-      "name": "Proxy Pulse HTTPS",
-      "format": "text"
-    },
-    {
-      "id": "proxy-pulse-socks4",
-      "name": "Proxy Pulse SOCKS4",
-      "format": "text"
-    },
-    {
-      "id": "proxy-pulse-socks5",
-      "name": "Proxy Pulse SOCKS5",
-      "format": "text"
-    },
-    {
-      "id": "thordata-http",
-      "name": "Thordata HTTP",
-      "format": "text"
-    },
-    {
-      "id": "thordata-https",
-      "name": "Thordata HTTPS",
-      "format": "text"
-    },
-    {
-      "id": "thordata-socks4",
-      "name": "Thordata SOCKS4",
-      "format": "text"
-    },
-    {
-      "id": "thordata-socks5",
-      "name": "Thordata SOCKS5",
-      "format": "text"
-    },
-    {
-      "id": "vpslab-http",
-      "name": "VPSLab HTTP",
-      "format": "text"
-    },
-    {
-      "id": "vpslab-socks4",
-      "name": "VPSLab SOCKS4",
-      "format": "text"
-    },
-    {
-      "id": "vpslab-socks5",
-      "name": "VPSLab SOCKS5",
-      "format": "text"
-    },
-    {
-      "id": "argh94-http",
-      "name": "Argh94 HTTP",
-      "format": "text"
-    },
-    {
-      "id": "argh94-https",
-      "name": "Argh94 HTTPS",
-      "format": "text"
-    },
-    {
-      "id": "argh94-socks4",
-      "name": "Argh94 SOCKS4",
-      "format": "text"
-    },
-    {
-      "id": "argh94-socks5",
-      "name": "Argh94 SOCKS5",
-      "format": "text"
-    },
-    {
-      "id": "proxyscraper-http",
-      "name": "ProxyScraper HTTP",
-      "format": "text"
-    },
-    {
-      "id": "proxyscraper-socks4",
-      "name": "ProxyScraper SOCKS4",
-      "format": "text"
-    },
-    {
-      "id": "proxyscraper-socks5",
-      "name": "ProxyScraper SOCKS5",
-      "format": "text"
-    },
-    {
-      "id": "kangproxy-tested",
-      "name": "KangProxy TESTED (mixed)",
-      "format": "text"
-    },
-    {
-      "id": "kangproxy-http",
-      "name": "KangProxy HTTP",
-      "format": "text"
-    },
-    {
-      "id": "kangproxy-https",
-      "name": "KangProxy HTTPS",
-      "format": "text"
-    },
-    {
-      "id": "kangproxy-socks4",
-      "name": "KangProxy SOCKS4",
-      "format": "text"
-    },
-    {
-      "id": "kangproxy-socks5",
-      "name": "KangProxy SOCKS5",
-      "format": "text"
-    },
-    {
-      "id": "tuanminpay-http",
-      "name": "TuanMinPay HTTP",
-      "format": "text"
-    },
-    {
-      "id": "tuanminpay-socks4",
-      "name": "TuanMinPay SOCKS4",
-      "format": "text"
-    },
-    {
-      "id": "tuanminpay-socks5",
-      "name": "TuanMinPay SOCKS5",
-      "format": "text"
-    },
-    {
-      "id": "riommo-http",
-      "name": "RioMMO HTTP",
-      "format": "text"
-    },
-    {
-      "id": "riommo-socks4",
-      "name": "RioMMO SOCKS4",
-      "format": "text"
-    },
-    {
-      "id": "riommo-socks5",
-      "name": "RioMMO SOCKS5",
-      "format": "text"
-    },
-    {
-      "id": "bes-public-proxy-list",
-      "name": "Bes-js Public Proxy List",
-      "format": "json"
-    },
-    {
-      "id": "proxifly-free-proxy-list",
-      "name": "Proxifly Free Proxy List",
-      "format": "json"
-    }
+    "Argh94 HTTP",
+    "Argh94 HTTPS",
+    "Argh94 SOCKS4",
+    "Argh94 SOCKS5",
+    "Bes-js Public Proxy List",
+    "KangProxy HTTP",
+    "KangProxy HTTPS",
+    "KangProxy SOCKS4",
+    "KangProxy SOCKS5",
+    "KangProxy TESTED (mixed)",
+    "Proxifly Free Proxy List",
+    "Proxy Pulse HTTP",
+    "Proxy Pulse HTTPS",
+    "Proxy Pulse SOCKS4",
+    "Proxy Pulse SOCKS5",
+    "ProxyScraper HTTP",
+    "ProxyScraper SOCKS4",
+    "ProxyScraper SOCKS5",
+    "RioMMO HTTP",
+    "RioMMO SOCKS4",
+    "RioMMO SOCKS5",
+    "Stormsia HTTP",
+    "Stormsia SOCKS4",
+    "Stormsia SOCKS5",
+    "Stormsia Working (mixed)",
+    "Thordata HTTP",
+    "Thordata HTTPS",
+    "Thordata SOCKS4",
+    "Thordata SOCKS5",
+    "TuanMinPay HTTP",
+    "TuanMinPay SOCKS4",
+    "TuanMinPay SOCKS5",
+    "VPSLab HTTP",
+    "VPSLab SOCKS4",
+    "VPSLab SOCKS5"
   ],
-  "total_scraped": 63517,
-  "validated": 781,
-  "still_working": 752,
-  "working_new": 173,
-  "working": 925,
-  "dead_new": 608,
-  "dead_total": 213956,
-  "geolocated": 925,
-  "stored_count": 925,
+  "per_source": {
+    "RioMMO HTTP": 20418,
+    "RioMMO SOCKS4": 17103,
+    "TuanMinPay HTTP": 8897,
+    "RioMMO SOCKS5": 8105,
+    "KangProxy HTTPS": 7708,
+    "TuanMinPay SOCKS4": 5596,
+    "TuanMinPay SOCKS5": 3969,
+    "ProxyScraper HTTP": 3459,
+    "KangProxy SOCKS4": 3009,
+    "ProxyScraper SOCKS4": 2914,
+    "Argh94 HTTP": 2762,
+    "Proxifly Free Proxy List": 2650,
+    "ProxyScraper SOCKS5": 2413,
+    "Bes-js Public Proxy List": 1980,
+    "KangProxy HTTP": 1767,
+    "KangProxy TESTED (mixed)": 965,
+    "Stormsia Working (mixed)": 905,
+    "Stormsia HTTP": 688,
+    "VPSLab HTTP": 621,
+    "Argh94 SOCKS4": 571,
+    "KangProxy SOCKS5": 501,
+    "VPSLab SOCKS5": 356,
+    "VPSLab SOCKS4": 240,
+    "Argh94 SOCKS5": 226,
+    "Proxy Pulse HTTP": 205,
+    "Proxy Pulse SOCKS4": 179,
+    "Stormsia SOCKS5": 168,
+    "Thordata SOCKS5": 135,
+    "Thordata HTTP": 83,
+    "Proxy Pulse SOCKS5": 70,
+    "Stormsia SOCKS4": 63,
+    "Thordata SOCKS4": 61,
+    "Thordata HTTPS": 52,
+    "Proxy Pulse HTTPS": 46,
+    "Argh94 HTTPS": 0
+  },
+  "total_scraped": 77012,
+  "eligible_new": 76704,
+  "validated": 15000,
+  "rotation_start": 7464,
+  "still_working": 286,
+  "working_new": 1138,
+  "working": 1424,
+  "dead_existing": 639,
+  "dead_new": 13862,
+  "dead_total": 14501,
+  "dead_tracked": 14501,
+  "quarantine_skipped": 153,
+  "inconclusive_new": 0,
+  "geolocated": 1424,
+  "stored_count": 1424,
   "no_country_count": 0,
-  "country_count": 49,
+  "country_count": 88,
   "protocol_counts": {
-    "HTTP": 278,
-    "HTTPS": 210,
-    "SOCKS4": 295,
-    "SOCKS5": 142
+    "HTTP": 606,
+    "HTTPS": 663,
+    "SOCKS4": 96,
+    "SOCKS5": 59
   },
   "country_counts": {
-    "CN": 350,
-    "US": 186,
-    "HK": 40,
-    "DE": 37,
-    "SG": 34,
-    "ID": 28,
-    "MY": 26,
-    "RU": 25,
-    "TH": 25,
-    "JP": 24,
-    "GB": 21,
-    "AE": 20,
-    "KR": 15,
-    "ZA": 13,
-    "IN": 7,
-    "FR": 7,
-    "PH": 6,
-    "NL": 5,
-    "MX": 3,
-    "FI": 3,
-    "KZ": 3,
-    "BR": 3,
-    "VE": 3,
-    "AU": 3,
-    "BD": 3,
-    "VN": 3,
-    "DO": 2,
-    "SY": 2,
-    "EC": 2,
-    "PL": 2,
-    "KH": 2,
+    "ID": 212,
+    "CN": 182,
+    "US": 141,
+    "MX": 63,
+    "IN": 50,
+    "RU": 44,
+    "CO": 37,
+    "DE": 36,
+    "JP": 31,
+    "IL": 31,
+    "SG": 30,
+    "BD": 28,
+    "PH": 27,
+    "CA": 26,
+    "BR": 25,
+    "EC": 24,
+    "ZA": 23,
+    "TH": 22,
+    "AU": 22,
+    "VE": 21,
+    "MY": 21,
+    "KR": 18,
+    "HK": 15,
+    "GB": 15,
+    "FR": 15,
+    "DO": 14,
+    "VN": 13,
+    "PE": 12,
+    "TR": 12,
+    "ES": 12,
+    "UA": 11,
+    "IR": 10,
+    "AR": 10,
+    "SE": 10,
+    "IT": 9,
+    "IE": 9,
+    "AE": 8,
+    "CL": 8,
+    "CH": 8,
+    "NL": 6,
+    "KZ": 6,
+    "SY": 6,
+    "FI": 5,
+    "KG": 5,
+    "PL": 5,
+    "NG": 5,
+    "HN": 5,
+    "KH": 4,
+    "IQ": 4,
+    "BG": 4,
+    "KE": 4,
+    "UZ": 4,
+    "SC": 3,
+    "LV": 3,
+    "AL": 3,
+    "PK": 3,
+    "LY": 3,
+    "PY": 3,
+    "XK": 2,
+    "SK": 2,
     "PS": 2,
-    "QA": 2,
-    "TW": 2,
-    "TR": 2,
-    "XK": 1,
-    "SK": 1,
-    "AR": 1,
-    "LU": 1,
+    "RO": 2,
+    "NP": 2,
+    "RS": 2,
+    "GT": 2,
+    "BO": 2,
     "BE": 1,
-    "EG": 1,
-    "IR": 1,
-    "CO": 1,
-    "PE": 1,
-    "KG": 1,
-    "IL": 1,
     "MK": 1,
-    "SE": 1,
-    "NG": 1
+    "BT": 1,
+    "BW": 1,
+    "MN": 1,
+    "EG": 1,
+    "PT": 1,
+    "TW": 1,
+    "ZW": 1,
+    "LB": 1,
+    "SI": 1,
+    "CZ": 1,
+    "BJ": 1,
+    "HR": 1,
+    "AT": 1,
+    "QA": 1,
+    "GH": 1,
+    "GQ": 1,
+    "TZ": 1,
+    "EE": 1,
+    "HU": 1,
+    "GR": 1
   }
 }
