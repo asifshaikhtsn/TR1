@@ -8,11 +8,18 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: walla-proxy-scrape
+  cancel-in-progress: true
+
 jobs:
   scrape:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-python@v6
         with:
@@ -31,7 +38,7 @@ jobs:
       - name: Install dependencies
         run: pip install aiohttp aiohttp-socks geoip2
 
-      - name: Run aggregator with MaxMind/IPinfo geolocation
+      - name: Run v2 proxy engine with MaxMind/IPinfo geolocation
         env:
           MAXMIND_ACCOUNT_ID: ${{ secrets.MAXMIND_ACCOUNT_ID }}
           MAXMIND_LICENSE_KEY: ${{ secrets.MAXMIND_LICENSE_KEY }}
@@ -42,7 +49,10 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
-          git diff --cached --quiet || git commit -m "Update proxy lists [skip ci]"
-          git pull --rebase --autostash origin main
-          git push
+          for i in {1..3}; do
+            git add -A
+            git diff --cached --quiet || git commit -m "Update proxy lists v2 [skip ci]"
+            git pull --rebase --autostash origin main && git push && break
+            echo "Push failed (attempt $i/3), retrying in 10s..."
+            sleep 10
+          done
