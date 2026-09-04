@@ -18,6 +18,13 @@ on:
         required: false
         type: number
         default: 120
+    secrets:
+      MAXMIND_ACCOUNT_ID:
+        required: false
+      MAXMIND_LICENSE_KEY:
+        required: false
+      IPINFO_TOKEN:
+        required: false
 
 permissions:
   contents: write
