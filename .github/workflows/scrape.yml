@@ -18,11 +18,25 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install dependencies
-        run: pip install aiohttp aiohttp-socks
+      - name: GeoLite cache key
+        id: geo-date
+        run: echo "week=$(date -u +%G-%V)" >> "$GITHUB_OUTPUT"
 
-      - name: Run aggregator
-        run: python scripts/proxy-aggregator.py
+      - name: Cache GeoLite2 Country
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/GeoLite2-Country.mmdb
+          key: geolite2-country-${{ runner.os }}-${{ steps.geo-date.outputs.week }}
+
+      - name: Install dependencies
+        run: pip install aiohttp aiohttp-socks geoip2
+
+      - name: Run aggregator with MaxMind/IPinfo geolocation
+        env:
+          MAXMIND_ACCOUNT_ID: ${{ secrets.MAXMIND_ACCOUNT_ID }}
+          MAXMIND_LICENSE_KEY: ${{ secrets.MAXMIND_LICENSE_KEY }}
+          IPINFO_TOKEN: ${{ secrets.IPINFO_TOKEN }}
+        run: python geo_runner.py scripts/proxy-aggregator.py
 
       - name: Commit results
         run: |
