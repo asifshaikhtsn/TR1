@@ -1,0 +1,48 @@
+name: Proxy V2 Engine CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "geo_runner.py"
+      - "geo_country.py"
+      - ".github/workflows/v2-ci.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Install runtime dependencies
+        run: pip install aiohttp aiohttp-socks geoip2
+      - name: Compile engine
+        run: python -m py_compile geo_runner.py geo_country.py
+      - name: Sanity-check health rules
+        run: |
+          python - <<'PY'
+          import tempfile
+          from pathlib import Path
+          import geo_runner
+
+          assert geo_runner.normalize_protocol('http') == 'HTTP'
+          assert geo_runner.normalize_protocol('socks5') == 'SOCKS5'
+          assert geo_runner.MAX_POOL_NEW_PER_RUN == 15000
+          assert geo_runner.MAX_BOOST_NEW_PER_RUN == 20000
+
+          with tempfile.TemporaryDirectory() as d:
+              store = geo_runner.HealthStore(Path(d) / 'dead.json')
+              store.failure('1.2.3.4:8080', 'HTTP')
+              assert store.quarantined('1.2.3.4:8080', 'HTTP')
+              assert not store.quarantined('1.2.3.4:8080', 'SOCKS5')
+              store.success('1.2.3.4:8080', 'HTTP')
+              assert not store.quarantined('1.2.3.4:8080', 'HTTP')
+          print('Proxy V2 sanity checks passed')
+          PY
