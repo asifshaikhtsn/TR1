@@ -6,6 +6,7 @@ on:
     paths:
       - "geo_runner.py"
       - "geo_country.py"
+      - "pool_runner_v22.py"
       - ".github/workflows/v2-ci.yml"
   workflow_dispatch:
 
@@ -23,19 +24,32 @@ jobs:
           python-version: "3.12"
       - name: Install runtime dependencies
         run: pip install aiohttp aiohttp-socks geoip2
-      - name: Compile engine
-        run: python -m py_compile geo_runner.py geo_country.py
-      - name: Sanity-check health rules
+      - name: Compile engines
+        run: python -m py_compile geo_runner.py geo_country.py pool_runner_v22.py
+      - name: Sanity-check health and smart selection rules
         run: |
           python - <<'PY'
           import tempfile
           from pathlib import Path
           import geo_runner
+          import pool_runner_v22 as smart
 
           assert geo_runner.normalize_protocol('http') == 'HTTP'
           assert geo_runner.normalize_protocol('socks5') == 'SOCKS5'
-          assert geo_runner.MAX_POOL_NEW_PER_RUN == 15000
           assert geo_runner.MAX_BOOST_NEW_PER_RUN == 20000
+          assert smart.PRIMARY_NEW_BUDGET == 18000
+          assert smart.RETRY_BUDGET == 5000
+          assert smart.RETRY_TIMEOUT > smart.FAST_TIMEOUT
+          assert smart.source_prior('Dinoz0rg Checked Proxies') > smart.source_prior('raw collector')
+          assert smart.source_prior('KangProxy TESTED') > smart.source_prior('KangProxy HTTP')
+
+          sample = []
+          for source, count in [('Checked', 100), ('Raw', 100)]:
+              for i in range(count):
+                  sample.append({'address': f'10.{0 if source == "Checked" else 1}.0.{i % 250}:8080', 'protocol': 'HTTP', 'source': source})
+          picked, meta = smart.smart_select(sample, 100, {'Checked': 0.95, 'Raw': 0.30})
+          assert len(picked) == 100
+          assert meta['sources'].get('Checked', 0) > meta['sources'].get('Raw', 0)
 
           with tempfile.TemporaryDirectory() as d:
               store = geo_runner.HealthStore(Path(d) / 'dead.json')
@@ -44,5 +58,5 @@ jobs:
               assert not store.quarantined('1.2.3.4:8080', 'SOCKS5')
               store.success('1.2.3.4:8080', 'HTTP')
               assert not store.quarantined('1.2.3.4:8080', 'HTTP')
-          print('Proxy V2 sanity checks passed')
+          print('Proxy V2.2 smart sanity checks passed')
           PY
